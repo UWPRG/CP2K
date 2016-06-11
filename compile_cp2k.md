@@ -15,11 +15,12 @@ https://www.cp2k.org/howto:compile
   ```bash
    module load icc_15.0.3-impi_5.0.3
     ```
-    
+
 4) Arch file and make
 
 I have attached my arch file here (with the Plumed, no need to source code patches). So copy it to your arch folder and then:
+
     ```bash
-  cd cp2k/makefiles
+      cd cp2k/makefiles
       ```
   

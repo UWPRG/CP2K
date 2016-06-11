@@ -26,7 +26,7 @@ I have attached my arch file here (with the Plumed FLAGS, no need to source code
   ```bash
     cd cp2k/makefiles
     make -j 8 ARCH=Linux-x86-64-intel-host VERSION=psmp
-    ```
+  ```
   
 If everything went ok, the executables are in the cp2k/exe/Linux-x86-64-intel-host directory.
   
@@ -35,6 +35,7 @@ If everything went ok, the executables are in the cp2k/exe/Linux-x86-64-intel-ho
 You can test Plumed and CP2K with the files in cp2k/tests/Fist/regtest-plumed2
  ```bash
 cp2k.psmp -o water.out water.inp
- ```
+```
+
 NB: I used the latest Plumed compiled by Chris (with MATHEVAL)
  

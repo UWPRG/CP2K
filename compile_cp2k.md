@@ -1,4 +1,4 @@
-## Instructions to compile AMBER14 on Hyak
+## Instructions to compile CP2k on Hyak
 
 1) Download or clone CP2K:
   
@@ -18,7 +18,7 @@ https://www.cp2k.org/howto:compile
 
 4) Arch file
 
-My arch file is in this repository (with the Plumed FLAGS, no need to source code patches). Copy it to the arch folder.
+My arch file, Linux-x86-64-intel-mic.psmp, is in this repository (with the Plumed FLAGS, no need to source code patches). Copy it to the arch folder.
   
 5) Install 
  

@@ -18,7 +18,7 @@ https://www.cp2k.org/howto:compile
 
 4) Arch file
 
-I have attached my arch file here (with the Plumed FLAGS, no need to source code patches). Copy it to the arch folder.
+My arch file is in this repository (with the Plumed FLAGS, no need to source code patches). Copy it to the arch folder.
   
 5) Install 
  

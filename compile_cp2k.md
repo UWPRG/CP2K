@@ -14,7 +14,7 @@ https://www.cp2k.org/howto:compile
 3) Load module.
   ```bash
    module load icc_15.0.3-impi_5.0.3
-     ```
+ ```
 
 4) Arch file
 

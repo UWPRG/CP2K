@@ -1,4 +1,4 @@
-## Instructions to compile CP2k on Hyak
+## Instructions to compile CP2K on Hyak
 
 1) Download or clone CP2K:
   

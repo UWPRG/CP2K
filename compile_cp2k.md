@@ -14,13 +14,27 @@ https://www.cp2k.org/howto:compile
 3) Load module.
   ```bash
    module load icc_15.0.3-impi_5.0.3
-    ```
+     ```
 
-4) Arch file and make
+4) Arch file
 
-I have attached my arch file here (with the Plumed, no need to source code patches). So copy it to your arch folder and then:
-
-    ```bash
-      cd cp2k/makefiles
-      ```
+I have attached my arch file here (with the Plumed FLAGS, no need to source code patches). Copy it to the arch folder.
   
+5) Install 
+ 
+  Go to cp2k/makefiles and build CP2K:
+  ```bash
+    cd cp2k/makefiles
+    make -j 8 ARCH=Linux-x86-64-intel-host VERSION=psmp
+    ```
+  
+If everything went ok, the executables are in the cp2k/exe/Linux-x86-64-intel-host directory.
+  
+6) Testing
+
+You can test Plumed and CP2K with the files in cp2k/tests/Fist/regtest-plumed2
+ ```bash
+cp2k.psmp -o water.out water.inp
+ ```
+NB: I used the latest Plumed compiled by Chris (with MATHEVAL)
+ 

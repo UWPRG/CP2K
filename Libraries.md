@@ -2,6 +2,7 @@
 ## Instructions to compile additional libraries for CP2k
 
 1) ELPA: Download ELPA from http://elpa.mpcdf.mpg.de/elpa-tar-archive tar -xvzf
+
 cd elpa
 mkdir build ( as per developers suggestions)
 cd build ( as per developers suggestionns)

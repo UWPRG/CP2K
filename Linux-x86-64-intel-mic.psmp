@@ -1,10 +1,16 @@
 # Arch file targeting Linux 64-bit using the Intel tool chain
 #
 PERL     = perl
-CPP      = cpp
+CPP      = #cpp
 AR       = xiar -r
 
-
+#ELPA
+ELPA_INC=/gscratch/scrubbed/lflo/codes/libs/elpa-2016.05.004/build/include/elpa-2016.05.004
+ELPA_LIB=/gscratch/scrubbed/lflo/codes/libs/elpa-2016.05.004/build/lib
+DFLAGS += -D__ELPA=201605
+IFLAGS += -I$(ELPA_INC)/modules
+IFLAGS += -I$(ELPA_INC)/elpa
+LIBS += -L$(ELPA_LIB) -lelpa
 
 # LIBINT: configure, build, and install
 # Version 1.1.5 (tested)
@@ -23,7 +29,7 @@ AR       = xiar -r
 # $ make install
 # $ make realclean
 #
-#LIBINTROOT = $(HOME)/libint
+ LIBINTROOT = /gscratch/scrubbed/lflo/codes/libs/libint-1.1.5
 
 # LIBXC: configure, build, and install
 # Version 2.2.2 (tested)
@@ -37,7 +43,7 @@ AR       = xiar -r
 # $ make install
 # $ make clean
 #
-#LIBXCROOT = /gscratch/pfaendtner/lflo/codes/libx-3.0.0
+ LIBXCROOT = /gscratch/scrubbed/lflo/codes/libs/libxc-2.2.2
 
 # LIBXSMM: cp2k/tools/build_libsmm/libxsmm or https://github.com/hfp/libxsmm
 # Please note that CP2K redistributes LIBXSMM and allows to build LIBXSMM
@@ -51,7 +57,8 @@ AR       = xiar -r
 #   INDICES_N="$(echo $(seq 1 24))" \
 #   INDICES_K="$(echo $(seq 1 24))"
 # $ make clean
-#LIBXSMMROOT = /gscratch/pfaendtner/lflo/codes/libxsmm_a
+#
+ LIBXSMMROOT=/gscratch/scrubbed/lflo/codes/libs/libxsmm
 
 # LIBXSTREAM: cp2k/src/acc/mic/libxstream or https://github.com/hfp/libxstream
 # Please note that CP2K redistributes a tested version of LIBXSTREAM.
@@ -59,7 +66,7 @@ AR       = xiar -r
 # $ make
 # $ make clean
 #
-#LIBXSTREAMROOT = /gscratch/pfaendtner/lflo/codes/libxstream
+#LIBXSTREAMROOT = $(HOME)/libxstream
 
 # Diagnostic message to be turned off
 DIAG_DISABLE = 8290,8291,10010,10212,11060
@@ -99,10 +106,7 @@ ifeq (,$(DBG))
   DBG := 0
 endif
 
-CPPFLAGS = -traditional -C $(DFLAGS) -P
-
-
-#CPPFLAGS  := $(NULL)
+CPPFLAGS  := $(NULL)
 CXXFLAGS  := -diag-disable $(DIAG_DISABLE) -std=c++0x
 CFLAGS    := -diag-disable $(DIAG_DISABLE)
 FCFLAGS   := -diag-disable $(DIAG_DISABLE) -free -fpp
@@ -118,7 +122,7 @@ ifeq (0,$(DBG))
   CXXFLAGS  += -fp-model precise #-fno-alias -ansi-alias
   CFLAGS    += -fp-model precise #-fno-alias -ansi-alias
   FCFLAGS   += -fp-model source
-  LDFLAGS   +=
+  LDFLAGS   += #
 
   ifeq (1,$(IPO))
     OPTFLAGS += -ipo-separate
@@ -179,7 +183,7 @@ ifneq (0,$(ACC))
     #MIC_CXFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
     #MIC_CCFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
     #MIC_FCFLAGS += -offload-option,mic,compiler,"-Wl,$(LIBXSMMROOT)/lib/mic/libxsmm.a"
-    MIC_LDFLAGS += -offload-option,mic,ld,"$(LIBXSMMROOT)/lib/libxsmm.a"
+    MIC_LDFLAGS += -offload-option,mic,ld,"$(LIBXSMMROOT)/lib/mic/libxsmm.a"
   endif
 
   ifeq (0,$(OCL))
@@ -256,7 +260,7 @@ ifneq (1,$(MKL))
       LIBS += -liomp5
     endif
     MIC_LDFLAGS += -offload-option,mic,ld,"-lpthread -lm"
-    LIBS += -lpthread -lm
+    LIBS += -lpthread -lm -ldl "-L$(MKLROOT)/lib/mic -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lmkl_blacs_intelmpi_lp64" -lmkl_scalapack_lp64 -lmkl_intel_lp64 -lmkl_core -lmkl_intel_thread -lmkl_blacs_intelmpi_lp64
   endif
 else # sequential
   DFLAGS  += -D__MKL -D__FFTSG -D__FFTW3
@@ -283,7 +287,8 @@ else # sequential
       LIBS += \
         $(MKLROOT)/lib/intel64/libmkl_scalapack_lp64.a
         -Wl,--start-group \
-          $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a \ $(MKLROOT)/lib/intel64/libmkl_core.a \
+          $(MKLROOT)/lib/intel64/libmkl_intel_lp64.a \
+          $(MKLROOT)/lib/intel64/libmkl_core.a \
           $(MKLROOT)/lib/intel64/libmkl_sequential.a \
         -Wl,--end-group \
         $(MKLROOT)/lib/intel64/libmkl_blacs_intelmpi_lp64.a
@@ -306,35 +311,27 @@ else # sequential
   LIBS += -lpthread -lm
 endif
 
-
-
 DFLAGS  += -D__INTEL -D__HAS_ISO_C_BINDING -D__USE_CP2K_TRACE
+IFLAGS  += # general include paths
+
 
 #PLUMED
-
-#include /gscratch/pfaendtner/cdf6gc/codes/plumed2-BayesBias/lib/plumed/src/lib/Plumed.inc
-#EXTERNAL_OBJECTS=$(PLUMED_STATIC_DEPENDENCIES)
-#DFLAGS  +=  -D__PLUMED2
-#PLUMED
-
-include /gscratch/pfaendtner/cdf6gc/codes/plumed2-BayesBias/lib/plumed/src/lib/Plumed.inc
-#IFLAGS  += /gscratch/pfaendtner/cdf6gc/codes/plumed2-BayesBias/lib/plumed/src/lib/Plumed.inc #general include paths
-EXTERNAL_OBJECTS=$(PLUMED_STATIC_DEPENDENCIES)
-DFLAGS  +=  -D__PLUMED2
+ include /gscratch/scrubbed/lflo/codes/plumed-2.4a/lib/plumed/src/lib/Plumed.inc
+ EXTERNAL_OBJECTS=$(PLUMED_STATIC_DEPENDENCIES)
+ DFLAGS  +=  -D__PLUMED2
+ LIBS +=  -lgsl -lgslcblas -lstdc++  -lz -ldl -llapack -lblas  -rdynamic -fopenmp 
 
 
-#Define __INTEL_COMPILER #in case of external preprocessing because some source (pw/fft/fftw3_lib.F)
+# Define __INTEL_COMPILER in case of external preprocessing because some source (pw/fft/fftw3_lib.F)
 # toggles code using this symbol, but of course the cpp preprocessor is not defining this symbol.
-CPPFLAGS  += -C $(IFLAGS) $(DFLAGS) -D__INTEL_COMPILER -P -traditional
+CPPFLAGS  += # -C $(IFLAGS) $(DFLAGS) -D__INTEL_COMPILER -P -traditional
 
 CXXFLAGS  += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
 CFLAGS    += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
 FCFLAGS   += $(OPTFLAGS) $(DFLAGS) $(IFLAGS)
 LDFLAGS   += $(OPTFLAGS)
 
-#LIBS = -lblas -lz -ldl -lstdc++  #-lplumed #PLUMED
-LIBS += -lstdc++  -lz -ldl -llapack -lblas  -rdynamic -fopenmp -lmatheval -L/gscratch/pfaendtner/cdf6gc/codes/libmatheval/lib/.libs -rdynamic -L/gscratch/pfaendtner/cdf6gc/codes/libmatheval/lib/.libs
-
+LIBS += -lstdc++
 ifneq (0,$(ACC))
   ifneq (0,$(MIC))
     LIBS      += $(MIC_LDFLAGS)
@@ -359,3 +356,4 @@ process.o: process.cpp
 
 transpose.o: transpose.cpp
 	$(CXX) -c $(CXXFLAGS) -O1 $<
+

@@ -13,7 +13,7 @@ Version 2016.11.004 is tested
 
 `tar xf elpa-2016.05.004.tar.gz`
 
-`cd elpa elpa-2016.05.004`
+`cd elpa-2016.05.004`
 
 `mkdir build (as per developers suggestions)`
 

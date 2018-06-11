@@ -1,0 +1,77 @@
+# Author: Alfio Lazzaro (alfio.lazzaro@chem.uzh.ch), UZH, 2018
+# Note: add optimization flags specific for your system (e.g. -xHost).
+
+LIBXC = /gscratch/pfaendtner/codes/cp2k/lib/libxc-4.0.3
+LIBINT   = /gscratch/pfaendtner/codes/cp2k/lib/libint-1.1.5
+LIBELPA  = /gscratch/pfaendtner/codes/cp2k/lib/elpa-2016.05.004/build
+FFTW3ROOT = /gscratch/pfaendtner/codes/cp2k/lib/fftw-3.3.6-pl2
+LIBXSMM  = /gscratch/pfaendtner/codes/cp2k/lib/libxsmm
+include /gscratch/pfaendtner/codes/plumed/plumed-2.4.0/lib/plumed/src/lib/Plumed.inc
+EXTERNAL_OBJECTS=$(PLUMED_STATIC_DEPENDENCIES)
+
+CC       = mpiicc
+CPP      = 
+FC       = mpiifort
+LD       = mpiifort
+AR       = ar -r
+CPPFLAGS =
+
+#---
+
+LIBS = -Wl,--start-group \
+			$(FFTW3ROOT)/lib/libfftw3.a \
+                  -Wl,--end-group
+LIBS    += ${MKLROOT}/lib/intel64/libmkl_scalapack_lp64.a \
+                                         -Wl,--start-group \
+                                                 ${MKLROOT}/lib/intel64/libmkl_intel_lp64.a \
+                                                 ${MKLROOT}/lib/intel64/libmkl_sequential.a \
+                                                 ${MKLROOT}/lib/intel64/libmkl_core.a \
+                                                 ${MKLROOT}/lib/intel64/libmkl_blacs_intelmpi_lp64.a \
+                                         -Wl,--end-group \
+                                         -lpthread -lm -ldl
+#---
+LIBS    += $(MKL_LIB)/libmkl_scalapack_lp64.a -Wl,--start-group \
+           $(MKL_LIB)/libmkl_intel_lp64.a ${MKL_LIB}/libmkl_sequential.a \
+           $(MKL_LIB)/libmkl_core.a \
+           ${MKL_LIB}/libmkl_blacs_intelmpi_lp64.a -Wl,--end-group \
+           -lpthread -lm
+LIBS    += -L$(LIBXSMM)/lib -lxsmmf -lxsmm -ldl
+LIBS    += -L$(LIBXC)/lib -lxcf03 -lxc
+LIBS    += -L$(LIBINT)/lib -lderiv -lint -lstdc++
+LIBS    += -L$(LIBELPA)/lib -lelpa
+LIBS   += -lgsl -lgslcblas -lz -llapack -lblas -rdynamic -fopenmp #plumed
+
+
+CFLAGS   = $(DFLAGS) -O2
+CFLAGS += -I$(FFTW3ROOT)/include 
+CFLAGS += -I${MKLROOT}/include 
+FCFLAGS  = $(DFLAGS) -O2 -fopenmp -funroll-loops -fpp -free
+FCFLAGS += -fp-model precise
+FCFLAGS += -g -traceback
+FCFLAGS += -I${MKLROOT}/include -I${MKLROOT}/include/fftw
+FCFLAGS += -I$(LIBXSMM)/include
+FCFLAGS += -I$(LIBXC)/include
+FCFLAGS += -I$(LIBELPA)/include/elpa-2016.05.004/modules -I$(LIBELPA)/include/elpa-2016.05.004/elpa
+FCFLAGS += -I$(FFTW3ROOT)/include
+FCLFAGS += -I${MKLROOT}/include
+LDFLAGS  = $(FCFLAGS) -static-intel
+LDFLAGS += -I$(FFTW3ROOT)/include
+LDFLAGS += -I${MKLROOT}/include
+LDFLAGS_C = $(FCFLAGS) -static-intel -nofor_main
+MKL_LIB  = ${MKLROOT}/lib/intel64
+#---
+
+DFLAGS   += -D__MKL -D__HAS_NO_SHARED_GLIBC -D__LIBXSMM \
+	-D__ELPA=201605 \
+	-D__LIBXC \
+	-D__LIBINT -D__LIBINT_MAX_AM=6 -D__LIBDERIV_MAX_AM1=5 \
+	-D__MAX_CONTR=4 \
+	-D__parallel -D__SCALAPACK -D__MPI_VERSION=3 \
+	-D__FFTW3 \
+	-D__HAS_ISO_C_BINDING \
+	-D__PLUMED2
+##--
+
+# Required due to memory leak that occurs if high optimisations are used
+mp2_optimize_ri_basis.o: mp2_optimize_ri_basis.F
+			$(FC) -c $(subst O2,O0,$(FCFLAGS)) $<

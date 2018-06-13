@@ -2,7 +2,8 @@
 
 1) Clone CP2K:  
 
-  ` git clone https://github.com/cp2k/cp2k.git`
+  ` git clone https://github.com/cp2k/cp2k.git`  
+  update June/2018: the most recent version (Version 7 from cp2k github) will not work with my arch file (the one in this repo) 
 
 2) Instructions from the website, a little bit out of date but worth to read.
 
@@ -22,21 +23,18 @@ Copy the installation file to the arch folder.
 Go to cp2k/makefiles and compile CP2K:
 
 `cd cp2k/makefiles`  
-`make -j 28 ARCH=Linux-x86-64-intel-host VERSION=psmp`
+`make -j 28 ARCH=Linux-x86-64-intel VERSION=psmp`
 
 If everything went ok, the executables are in the
-`cp2k/exe/Linux-x86-64-intel-host` directory.
+`cp2k/exe/Linux-x86-64-intel` directory.
 
 6) Testing
+
+Update June/2018: if you compile CP2K with my Elpa, before running the tests, you have to set this:
+`export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/gscratch/pfaendtner/codes/cp2k/lib/elpa-2016.05.004/build/lib`
 
 Run
 `make -j 2 ARCH=Linux-x86-64-intel-host VERSION=psmp test`
 more information on the website.
 
-You can test Plumed and CP2K with the files in
 
-`cp2k/tests/Fist/regtest-plumed2`
-
-for example
-
-`cp2k.psmp -o water.out water.inp`

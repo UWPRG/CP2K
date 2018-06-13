@@ -3,7 +3,8 @@
 1) Clone CP2K:  
 
   ` git clone https://github.com/cp2k/cp2k.git`  
-  update June/2018: the most recent version (Version 7 from cp2k github) will not work with my arch file (the one in this repo) 
+  update June/2018: the most recent version (Version 7 from cp2k github) will not work with my arch file (the one in this repo).
+  Use version 6 instead `/gscratch/pfaendtner/codes/`
 
 2) Instructions from the website, a little bit out of date but worth to read.
 
@@ -30,7 +31,7 @@ If everything went ok, the executables are in the
 
 6) Testing
 
-Update June/2018: if you compile CP2K with my Elpa, before running the tests, you have to set this:
+Update June/2018: if you compiled CP2K with my Elpa, before running the tests, you have to set this:
 `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/gscratch/pfaendtner/codes/cp2k/lib/elpa-2016.05.004/build/lib`
 
 Run
